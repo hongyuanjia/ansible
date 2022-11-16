@@ -1,0 +1,26 @@
+- name: Check if R is installed
+  shell: "command -v R >/dev/null 2>&1"
+  register: r_exists
+  ignore_errors: yes
+  failed_when: r_exists.rc != 0 and r_exists.rc != 127
+
+- name: Add R project's GPG key
+  get_url:
+    url: "https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc"
+    dest: "/etc/apt/trusted.gpg.d/cran_ubuntu_key.asc"
+  become: true
+  when: r_exists is failed
+
+- name: Add R apt repository
+  apt_repository:
+    repo: "deb https://cloud.r-project.org/bin/linux/ubuntu {{ ansible_distribution_release  }}-cran40/"
+  become: true
+  when: r_exists is failed
+
+- name: Install R
+  apt:
+    name: ["r-base", "r-base-dev"]
+    install_recommends: false
+    state: present
+  become: true
+  when: r_exists is failed

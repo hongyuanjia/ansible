@@ -1,0 +1,18 @@
+- name: Install basic system packages
+  become: true
+  apt:
+    name: ["build-essential", "cmake", "pkg-config"]
+
+- name: Install system packages required for buiding neovim
+  become: true
+  apt:
+    name: ["lua5.1", "unzip", "libtool", "libtool-bin", "gettext", "clang"]
+
+- name: Install other system packages
+  become: true
+  apt:
+    name: ["curl", "wget", "htop", "python3-pip"]
+
+- name: Install github3.py module used by 'github_release'
+  pip:
+    name: github3.py>=1.0.0a3

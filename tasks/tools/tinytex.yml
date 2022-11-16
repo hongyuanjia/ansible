@@ -1,0 +1,16 @@
+- name: Check if TinyTeX has already been installed
+  stat:
+    path: "{{ lookup('env', 'HOME') }}/.TinyTeX"
+  register: tinytex
+
+- name: Download TinyTeX installer
+  get_url:
+    url: https://yihui.org/tinytex/install-bin-unix.sh
+    dest: /tmp/install-bin-unix.sh
+    mode: '0755'
+    force: yes
+  when: tinytex.stat.exists == False
+
+- name: Install TinyTex
+  shell: /tmp/install-bin-unix.sh
+  when: tinytex.stat.exists == False

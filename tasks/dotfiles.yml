@@ -1,0 +1,18 @@
+- name: Check if chezmoi has already been installed
+  stat:
+    path: "{{ lookup('env', 'HOME') }}/.local/bin/chezmoi"
+  register: chezmoi_stats
+
+- name: Install chezmoi
+  shell: 'sh -c "$(curl -fsLS get.chezmoi.io)" -- -b {{ lookup("env", "HOME") }}/.local/bin'
+  when: chezmoi_stats.stat.exists == False
+
+- name: Install age
+  become: true
+  apt:
+    name: ["age"]
+
+- name: Apply dot files
+  shell: "chezmoi init --apply --force git@github.com:hongyuanjia/dotfiles.git"
+  environment:
+    PATH: "{{ lookup('env', 'HOME') }}/.local/bin:{{ lookup('env', 'PATH') }}"

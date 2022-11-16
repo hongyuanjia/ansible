@@ -1,0 +1,17 @@
+- name: Check if cargo is installed
+  shell: "command -v cargo >/dev/null 2>&1"
+  register: cargo_exists
+  ignore_errors: yes
+  failed_when: cargo_exists.rc != 0 and cargo_exists.rc != 127
+
+- name: Download Rustup installer
+  get_url:
+    url: https://sh.rustup.rs
+    dest: /tmp/rust-init.sh
+    mode: '0755'
+    force: yes
+  when: cargo_exists is failed
+
+- name: Install Rustup
+  shell: /tmp/rust-init.sh -y
+  when: cargo_exists is failed

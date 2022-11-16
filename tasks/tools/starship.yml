@@ -1,0 +1,20 @@
+- name: Check if Starship is installed
+  shell: "command -v starship >/dev/null 2>&1"
+  register: starship_exists
+  ignore_errors: yes
+  failed_when: starship_exists.rc != 0 and starship_exists.rc != 127
+
+- name: Download Starship installer
+  get_url:
+    url: https://starship.rs/install.sh
+    dest: /tmp/starship-install.sh
+    mode: '0755'
+    force: yes
+  when: starship_exists is failed
+
+- name: Install Starship
+  shell: /tmp/starship-install.sh
+  when: starship_exists is failed
+
+- name: Re-init chezmoi to regerate dotfiles
+  include_tasks: ./tasks/dotfiles.yml

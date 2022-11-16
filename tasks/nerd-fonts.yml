@@ -1,0 +1,42 @@
+- name: Ensure .fonts directory exists
+  file:
+    path: "{{ lookup('env', 'HOME') }}/.local/share/fonts"
+    state: directory
+
+- name: Check if JetBrainsMono nerd fonts already exists
+  shell: "ls {{ lookup('env', 'HOME') }}/.local/share/fonts/JetBrains*Mono*Nerd*Font*Complete*"
+  register: jbnf_exists
+  ignore_errors: yes
+
+- name: Get the latest release of nerd fonts
+  community.general.github_release:
+    user: ryanoasis
+    repo: nerd-fonts
+    action: latest_release
+  register: nf_ver
+  when: jbnf_exists is failed
+
+- name: Download JetBrainsMono nerd fonts
+  unarchive:
+    src: "https://github.com/ryanoasis/nerd-fonts/releases/download/{{nf_ver.tag}}/JetBrainsMono.zip"
+    dest: "{{ lookup('env', 'HOME') }}/.local/share/fonts"
+    remote_src: yes
+  when: jbnf_exists is failed
+
+- name: Get Windows fonts to delete
+  find:
+    paths: "{{ lookup('env', 'HOME') }}/.local/share/fonts/"
+    patterns: "*Windows Compatible*"
+  register: win_fonts
+  when: jbnf_exists is failed
+
+- name: Remove Windows fonts
+  file:
+    path: "{{ item['path'] }}"
+    state: absent
+  with_items: "{{ win_fonts['files'] }}"
+  when: jbnf_exists is failed
+
+- name: Update font cache
+  shell: fc-cache -fv
+  when: jbnf_exists is failed

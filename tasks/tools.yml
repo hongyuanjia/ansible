@@ -1,0 +1,13 @@
+- name: Install productivity packages
+  become: true
+  apt:
+    name: ["bat", "tmux", "fzf", "gimp", "ripgrep"]
+
+- name: Install Delta
+  include_tasks: ./tasks/tools/delta.yml
+
+- name: Install Starship
+  include_tasks: ./tasks/tools/starship.yml
+
+- name: Install TinyTex
+  include_tasks: ./tasks/tools/tinytex.yml
