@@ -1,3 +1,8 @@
+# whether to use r2u
+- name: Whether to use r2u for fast R package install
+  set_fact:
+    use_r2u: true
+
 - name: Check if R is installed
   shell: "command -v R >/dev/null 2>&1"
   register: r_exists
@@ -14,6 +19,7 @@
 - name: Add R apt repository
   apt_repository:
     repo: "deb https://cloud.r-project.org/bin/linux/ubuntu {{ ansible_distribution_release  }}-cran40/"
+    filename: cran_r
   become: true
   when: r_exists is failed
 
@@ -24,3 +30,39 @@
     state: present
   become: true
   when: r_exists is failed
+
+# Ref: https://github.com/eddelbuettel/r2u/blob/master/inst/scripts/add_cranapt_jammy.sh
+- name: Add r2u for fast R package install
+  block:
+    - name: Add CRAN apt key
+      get_url:
+        url: "https://eddelbuettel.github.io/r2u/assets/dirk_eddelbuettel_key.asc"
+        dest: "/etc/apt/trusted.gpg.d/cranapt_key.asc"
+    - name: Add CRAN apt repo
+      apt_repository:
+        repo: "deb [arch=amd64] https://r2u.stat.illinois.edu/ubuntu {{ ansible_distribution_release }} main"
+        filename: cranapt
+    - name: Add pinning to ensure package sorting
+      blockinfile:
+        path: /etc/apt/preferences.d/99cranapt
+        block: |
+          Package: *
+          Pin: release o=CRAN-Apt Project
+          Pin: release l=CRAN-Apt Packages
+          Pin-Priority: 700
+        create: true
+    - name: Install bspm dependencies
+      apt:
+        name: ["python3-dbus", "python3-gi", "python3-apt"]
+    - name: Get R home
+      shell: R RHOME
+      register: R_HOME
+    - name: Install bspm
+      shell: Rscript -e 'install.packages("bspm")'
+    - name: Enable bspm
+      lineinfile:
+        line: "suppressMessages(bspm::enable())"
+        path: "{{ R_HOME.stdout }}/etc/Rprofile.site"
+        create: true
+  become: true
+  when: use_r2u
