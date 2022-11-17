@@ -7,7 +7,7 @@
   when: cargo_exists.rc != 0
   block:
     - name: Check if running in WSL
-      shell: 'grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null'
+      command: 'grep -qEi "(Microsoft|WSL)" /proc/version'
       failed_when: no
       register: in_wsl
 
