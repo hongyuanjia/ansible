@@ -35,15 +35,19 @@
 
       # Ref: https://github.com/eddelbuettel/r2u/blob/master/inst/scripts/add_cranapt_jammy.sh
     - name: Add r2u for fast R package install
+      become: true
+      when: use_r2u
       block:
         - name: Add CRAN apt key
           get_url:
             url: "https://eddelbuettel.github.io/r2u/assets/dirk_eddelbuettel_key.asc"
             dest: "/etc/apt/trusted.gpg.d/cranapt_key.asc"
+
         - name: Add CRAN apt repo
           apt_repository:
             repo: "deb [arch=amd64] https://r2u.stat.illinois.edu/ubuntu {{ ansible_distribution_release }} main"
             filename: cranapt
+
         - name: Add pinning to ensure package sorting
           blockinfile:
             path: /etc/apt/preferences.d/99cranapt
@@ -53,18 +57,35 @@
               Pin: release l=CRAN-Apt Packages
               Pin-Priority: 700
             create: true
+
         - name: Install bspm dependencies
           apt:
             name: ["python3-dbus", "python3-gi", "python3-apt"]
+
         - name: Get R home
           shell: R RHOME
           register: R_HOME
+
         - name: Install bspm
           shell: Rscript -e 'install.packages("bspm")'
+
+        - name: Check if running in WSL
+          shell: 'grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null'
+          failed_when: no
+          register: in_wsl
+
         - name: Enable bspm
+          when: in_wsl.rc != 0
           lineinfile:
             line: "suppressMessages(bspm::enable())"
             path: "{{ R_HOME.stdout }}/etc/Rprofile.site"
             create: true
-      become: true
-      when: use_r2u
+
+        - name: Enable bspm for WSL2
+          when: in_wsl.rc == 0
+          blockinfile:
+            path: "{{ R_HOME.stdout }}/etc/Rprofile.site"
+            block: |
+              suppressMessages(bspm::enable())
+              options(bspm.sudo=TRUE)
+            create: true
