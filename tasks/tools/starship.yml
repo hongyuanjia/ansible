@@ -14,7 +14,7 @@
       force: yes
 
   - name: Install Starship
-    shell: /tmp/starship-install.sh
+    shell: /tmp/starship-install.sh -y
 
   - name: Re-init chezmoi to regerate dotfiles
     include_tasks: ./tasks/dotfiles.yml
