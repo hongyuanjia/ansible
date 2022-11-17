@@ -16,14 +16,12 @@
         url: "https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc"
         dest: "/etc/apt/trusted.gpg.d/cran_ubuntu_key.asc"
       become: true
-      when: r_exists is failed
 
     - name: Add R apt repository
       apt_repository:
         repo: "deb https://cloud.r-project.org/bin/linux/ubuntu {{ ansible_distribution_release  }}-cran40/"
         filename: cran_r
       become: true
-      when: r_exists is failed
 
     - name: Install R
       apt:
@@ -31,7 +29,6 @@
         install_recommends: false
         state: present
       become: true
-      when: r_exists is failed
 
       # Ref: https://github.com/eddelbuettel/r2u/blob/master/inst/scripts/add_cranapt_jammy.sh
     - name: Add r2u for fast R package install
