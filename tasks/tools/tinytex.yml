@@ -6,12 +6,12 @@
 - name: Install TinyTeX
   when: tinytex.stat.exists == False
   block:
-  - name: Download TinyTeX installer
-    get_url:
-      url: https://yihui.org/tinytex/install-bin-unix.sh
-      dest: /tmp/install-bin-unix.sh
-      mode: '0755'
-      force: yes
+    - name: Download TinyTeX installer
+      get_url:
+        url: https://yihui.org/tinytex/install-bin-unix.sh
+        dest: /tmp/install-bin-unix.sh
+        mode: '0755'
+        force: yes
 
-  - name: Install TinyTex
-    shell: /tmp/install-bin-unix.sh
+    - name: Install TinyTex
+      shell: /tmp/install-bin-unix.sh

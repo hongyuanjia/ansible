@@ -6,12 +6,12 @@
 - name: Install chezmoi
   when: chezmoi_stats.stat.exists == False
   block:
-  - name: Download chezmoi
-    shell: 'sh -c "$(curl -fsLS get.chezmoi.io)" -- -b {{ lookup("env", "HOME") }}/.local/bin'
-  - name: Install age
-    become: true
-    apt:
-      name: ["age"]
+    - name: Download chezmoi
+      shell: 'sh -c "$(curl -fsLS get.chezmoi.io)" -- -b {{ lookup("env", "HOME") }}/.local/bin'
+    - name: Install age
+      become: true
+      apt:
+        name: ["age"]
 
 - name: Apply dot files
   shell: "chezmoi init --apply --force git@github.com:hongyuanjia/dotfiles.git"

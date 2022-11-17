@@ -6,15 +6,15 @@
 - name: Install Starship
   when: starship_exists.rc != 0
   block:
-  - name: Download Starship installer
-    get_url:
-      url: https://starship.rs/install.sh
-      dest: /tmp/starship-install.sh
-      mode: '0755'
-      force: yes
+    - name: Download Starship installer
+      get_url:
+        url: https://starship.rs/install.sh
+        dest: /tmp/starship-install.sh
+        mode: '0755'
+        force: yes
 
-  - name: Install Starship
-    shell: /tmp/starship-install.sh -y
+    - name: Install Starship
+      shell: /tmp/starship-install.sh -y
 
-  - name: Re-init chezmoi to regerate dotfiles
-    include_tasks: ./tasks/dotfiles.yml
+    - name: Re-init chezmoi to regerate dotfiles
+      include_tasks: ./tasks/dotfiles.yml

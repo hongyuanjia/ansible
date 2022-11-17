@@ -11,29 +11,29 @@
 - name: Install JetBrainsMono nerd fonts
   when: jbnf_exists.rc != 0
   block:
-  - name: Get the latest release of nerd fonts
-    uri:
-      url: https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest
-      return_content: true
-    register: nf_latest
+    - name: Get the latest release of nerd fonts
+      uri:
+        url: https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest
+        return_content: true
+      register: nf_latest
 
-  - name: Download JetBrainsMono nerd fonts
-    unarchive:
-      src: "https://github.com/ryanoasis/nerd-fonts/releases/download/{{nf_latest.json.tag_name}}/JetBrainsMono.zip"
-      dest: "{{ lookup('env', 'HOME') }}/.local/share/fonts"
-      remote_src: yes
+    - name: Download JetBrainsMono nerd fonts
+      unarchive:
+        src: "https://github.com/ryanoasis/nerd-fonts/releases/download/{{nf_latest.json.tag_name}}/JetBrainsMono.zip"
+        dest: "{{ lookup('env', 'HOME') }}/.local/share/fonts"
+        remote_src: yes
 
-  - name: Get Windows fonts to delete
-    find:
-      paths: "{{ lookup('env', 'HOME') }}/.local/share/fonts/"
-      patterns: "*Windows Compatible*"
-    register: win_fonts
+    - name: Get Windows fonts to delete
+      find:
+        paths: "{{ lookup('env', 'HOME') }}/.local/share/fonts/"
+        patterns: "*Windows Compatible*"
+      register: win_fonts
 
-  - name: Remove Windows fonts
-    file:
-      path: "{{ item['path'] }}"
-      state: absent
-    with_items: "{{ win_fonts['files'] }}"
+    - name: Remove Windows fonts
+      file:
+        path: "{{ item['path'] }}"
+        state: absent
+      with_items: "{{ win_fonts['files'] }}"
 
-  - name: Update font cache
-    shell: fc-cache -fv
+    - name: Update font cache
+      shell: fc-cache -fv

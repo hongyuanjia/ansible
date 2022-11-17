@@ -6,22 +6,22 @@
 - name: Install Delta
   when: delta_exists.rc != 0
   block:
-  - name: Get the latest release of delta
-    uri:
-      url: https://api.github.com/repos/dandavison/delta/releases/latest
-      return_content: true
-    register: delta_latest
+    - name: Get the latest release of delta
+      uri:
+        url: https://api.github.com/repos/dandavison/delta/releases/latest
+        return_content: true
+      register: delta_latest
 
-  - name: Download the latest release of delta
-    get_url:
-      url: "https://github.com/dandavison/delta/releases/download/{{delta_latest.json.tag_name}}/git-delta_{{delta_latest.json.tag_name}}_amd64.deb"
-      dest: /tmp/delta_latest.deb
-      tmp_dest: /tmp/
-      force: yes
+    - name: Download the latest release of delta
+      get_url:
+        url: "https://github.com/dandavison/delta/releases/download/{{delta_latest.json.tag_name}}/git-delta_{{delta_latest.json.tag_name}}_amd64.deb"
+        dest: /tmp/delta_latest.deb
+        tmp_dest: /tmp/
+        force: yes
 
-  - name: Install delta
-    command: dpkg -i /tmp/delta_latest.deb
-    become: true
+    - name: Install delta
+      command: dpkg -i /tmp/delta_latest.deb
+      become: true
 
-  - name: Re-init chezmoi to regerate dotfiles
-    include_tasks: ./tasks/dotfiles.yml
+    - name: Re-init chezmoi to regerate dotfiles
+      include_tasks: ./tasks/dotfiles.yml

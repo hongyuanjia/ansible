@@ -6,19 +6,19 @@
 - name: Install Neovim
   when: nvim_exists.rc != 0
   block:
-  - name: Get packer.nvim
-    git:
-      repo: "https://github.com/wbthomason/packer.nvim"
-      dest: "{{ lookup('env', 'HOME') }}/.local/share/nvim/site/pack/packer/start/packer.nvim"
+    - name: Get packer.nvim
+      git:
+        repo: "https://github.com/wbthomason/packer.nvim"
+        dest: "{{ lookup('env', 'HOME') }}/.local/share/nvim/site/pack/packer/start/packer.nvim"
 
-  - name: Clone Neovim
-    git:
-      repo: "https://github.com/neovim/neovim.git"
-      dest: "/tmp/neovim"
+    - name: Clone Neovim
+      git:
+        repo: "https://github.com/neovim/neovim.git"
+        dest: "/tmp/neovim"
 
-  - name: Build Neovim
-    shell: "cd /tmp/neovim && make distclean && make -j 20"
+    - name: Build Neovim
+      shell: "cd /tmp/neovim && make distclean && make -j 20"
 
-  - name: Install Neovim
-    shell: "cd /tmp/neovim && make install"
-    become: true
+    - name: Install Neovim
+      shell: "cd /tmp/neovim && make install"
+      become: true
