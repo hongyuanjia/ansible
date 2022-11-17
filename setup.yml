@@ -2,7 +2,6 @@
   vars:
     source_key: "./.ssh/id_rsa"
     dest_key: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa"
-    rebld_nvim: false
   pre_tasks:
   - name: Update Apt
     become: true
