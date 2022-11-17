@@ -1,29 +1,28 @@
 - name: Check if Delta is installed
   shell: "command -v delta >/dev/null 2>&1"
   register: delta_exists
-  ignore_errors: yes
-  failed_when: delta_exists.rc != 0 and delta_exists.rc != 127
+  failed_when: no
 
-- name: Get the latest release of delta
-  community.general.github_release:
-    user: dandavison
-    repo: delta
-    action: latest_release
-  register: delta_ver
-  when: delta_exists is failed
+- name: Install Delta
+  when: delta_exists.rc != 0
+  block:
+  - name: Get the latest release of delta
+    community.general.github_release:
+      user: dandavison
+      repo: delta
+      action: latest_release
+    register: delta_ver
 
-- name: Download the latest release of delta
-  get_url:
-    url: "https://github.com/dandavison/delta/releases/download/{{delta_ver.tag}}/git-delta_{{delta_ver.tag}}_amd64.deb"
-    dest: /tmp/delta_latest.deb
-    tmp_dest: /tmp/
-    force: yes
-  when: delta_exists is failed
+  - name: Download the latest release of delta
+    get_url:
+      url: "https://github.com/dandavison/delta/releases/download/{{delta_ver.tag}}/git-delta_{{delta_ver.tag}}_amd64.deb"
+      dest: /tmp/delta_latest.deb
+      tmp_dest: /tmp/
+      force: yes
 
-- name: Install delta
-  command: dpkg -i /tmp/delta_latest.deb
-  become: true
-  when: delta_exists is failed
+  - name: Install delta
+    command: dpkg -i /tmp/delta_latest.deb
+    become: true
 
-- name: Re-init chezmoi to regerate dotfiles
-  include_tasks: ./tasks/dotfiles.yml
+  - name: Re-init chezmoi to regerate dotfiles
+    include_tasks: ./tasks/dotfiles.yml

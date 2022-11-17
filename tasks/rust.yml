@@ -1,17 +1,38 @@
 - name: Check if cargo is installed
   shell: "command -v cargo >/dev/null 2>&1"
   register: cargo_exists
-  ignore_errors: yes
-  failed_when: cargo_exists.rc != 0 and cargo_exists.rc != 127
+  failed_when: no
 
-- name: Download Rustup installer
-  get_url:
-    url: https://sh.rustup.rs
-    dest: /tmp/rust-init.sh
-    mode: '0755'
-    force: yes
-  when: cargo_exists is failed
+- name: Install Rust
+  when: cargo_exists.rc != 0
+  block:
+  - name: Check if running in WSL
+    shell: 'grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null'
+    failed_when: no
+    register: in_wsl
 
-- name: Install Rustup
-  shell: /tmp/rust-init.sh -y
-  when: cargo_exists is failed
+  - when: in_wsl.rc !=0
+    block:
+    - name: Download Rustup installer
+      get_url:
+        url: https://sh.rustup.rs
+        dest: /tmp/rust-init.sh
+        mode: '0755'
+        force: yes
+
+    - name: Install Rustup
+      command: /tmp/rust-init.sh -y
+
+
+  - when: in_wsl.rc ==0
+    block:
+    - name: Download Rustup installer for WSL2
+      when: in_wsl.rc == 0
+      get_url:
+        url: https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init
+        dest: /tmp/rustup-init
+        mode: '0755'
+        force: yes
+
+    - name: Install Rustup
+      command: /tmp/rustup-init -y
