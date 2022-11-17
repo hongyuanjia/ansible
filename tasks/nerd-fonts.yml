@@ -12,15 +12,14 @@
   when: jbnf_exists.rc != 0
   block:
   - name: Get the latest release of nerd fonts
-    community.general.github_release:
-      user: ryanoasis
-      repo: nerd-fonts
-      action: latest_release
-    register: nf_ver
+    uri:
+      url: https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest
+      return_content: true
+    register: nf_latest
 
   - name: Download JetBrainsMono nerd fonts
     unarchive:
-      src: "https://github.com/ryanoasis/nerd-fonts/releases/download/{{nf_ver.tag}}/JetBrainsMono.zip"
+      src: "https://github.com/ryanoasis/nerd-fonts/releases/download/{{nf_latest.json.tag_name}}/JetBrainsMono.zip"
       dest: "{{ lookup('env', 'HOME') }}/.local/share/fonts"
       remote_src: yes
 

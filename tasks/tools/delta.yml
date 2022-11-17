@@ -7,15 +7,14 @@
   when: delta_exists.rc != 0
   block:
   - name: Get the latest release of delta
-    community.general.github_release:
-      user: dandavison
-      repo: delta
-      action: latest_release
-    register: delta_ver
+    uri:
+      url: https://api.github.com/repos/dandavison/delta/nerd-fonts/releases/latest
+      return_content: true
+    register: delta_latest
 
   - name: Download the latest release of delta
     get_url:
-      url: "https://github.com/dandavison/delta/releases/download/{{delta_ver.tag}}/git-delta_{{delta_ver.tag}}_amd64.deb"
+      url: "https://github.com/dandavison/delta/releases/download/{{delta_latest.json.tag_name}}/git-delta_{{delta_latest.json.tag_name}}_amd64.deb"
       dest: /tmp/delta_latest.deb
       tmp_dest: /tmp/
       force: yes
