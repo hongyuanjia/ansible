@@ -1,0 +1,20 @@
+- name: Check if LazyGit is installed
+  shell: "command -v lazygit >/dev/null 2>&1"
+  register: lazygit_exists
+  failed_when: no
+
+- name: Install LazyGit
+  when: lazygit_exists.rc != 0
+  block:
+    - name: Get the latest release of LazyGit
+      uri:
+        url: https://api.github.com/repos/jesseduffield/lazygit/releases/latest
+        return_content: true
+      register: lazygit_latest
+
+    - name: Download the latest release of LazyGit
+      unarchive:
+        src: "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_{{ lazygit_latest.json.tag_name | replace('v', '') }}_Linux_x86_64.tar.gz"
+        remote_src: yes
+        dest: "{{ lookup('env', 'HOME') }}/.local/bin"
+        include: lazygit

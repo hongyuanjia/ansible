@@ -11,3 +11,6 @@
 
 - name: Install TinyTex
   include_tasks: ./tasks/tools/tinytex.yml
+
+- name: Install LazyGit
+  include_tasks: ./tasks/tools/lazygit.yml
