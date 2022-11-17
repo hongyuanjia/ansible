@@ -8,7 +8,7 @@
   block:
   - name: Get the latest release of delta
     uri:
-      url: https://api.github.com/repos/dandavison/delta/nerd-fonts/releases/latest
+      url: https://api.github.com/repos/dandavison/delta/releases/latest
       return_content: true
     register: delta_latest
 
