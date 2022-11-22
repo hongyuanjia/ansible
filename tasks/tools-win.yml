@@ -1,0 +1,80 @@
+- name: Install software using chocolatey
+  chocolatey.chocolatey.win_chocolatey:
+    name:
+      - dropbox
+      - everything
+      - internet-download-manager
+      - irfanview
+      - irfanviewplugins
+      - sumatrapdf
+
+- name: Install IM software using chocolatey
+  chocolatey.chocolatey.win_chocolatey:
+    pinned: true
+    ignore_checksums: true
+    name:
+      - wechat
+      - tim
+      - dingtalk
+
+- name: Install Office 365 using chocolatey
+  chocolatey.chocolatey.win_chocolatey:
+    name: microsoft-office-deployment
+    choco_args:
+      - '/64bit'
+      - '/Language zh-cn'
+      - '/Product O365HomePremRetail'
+      - '/Exclude Publisher, OneNote, Access'
+
+- name: Add scoop buckets
+  block:
+    - name: Install git
+      community.windows.win_scoop:
+        name: git
+
+    - name: Add 'extras' bucket
+      community.windows.win_scoop_bucket:
+        name: "extras"
+    - name: Add 'nerd-fonts' bucket
+      community.windows.win_scoop_bucket:
+        name: "nerd-fonts"
+    - name: Add 'r-bucket' bucket
+      community.windows.win_scoop_bucket:
+        name: "r-bucket"
+        repo: "https://github.com/cderv/r-bucket"
+
+- name: Install software using scoop
+  community.windows.win_scoop:
+    no_cache: true
+    name:
+      - JetBrainsMono-NF
+      - age
+      - bat
+      - chezmoi
+      - cmake
+      - delta
+      - fd
+      - firefox
+      - flow-launcher
+      - lazygit
+      - less
+      - neovim
+      - potplayer
+      - powertoys
+      - pwsh
+      - python
+      - quarto
+      - rig
+      - ripgrep
+      - rtools
+      - rustup
+      - screentogif
+      - snipaste
+      - starship
+      - terminal-icons
+      - tinytex
+      - windows-terminal
+      - zotero
+
+- name: Remove all scoop download cache
+  ansible.windows.win_shell: scoop cache rm *

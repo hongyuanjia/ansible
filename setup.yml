@@ -19,3 +19,14 @@
     - include_tasks: tasks/rust.yml
     - include_tasks: tasks/nerd-fonts.yml
     - include_tasks: tasks/tools.yml
+
+- hosts: win10
+  vars:
+    source_key: "./.ssh/id_rsa"
+    dest_key: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa"
+  tasks:
+    - include_tasks: tasks/core-win.yml
+    - include_tasks: tasks/tools-win.yml
+    - include_tasks: tasks/ssh.yml
+    - include_tasks: tasks/dotfiles.yml
+    - include_tasks: tasks/tweak-win.yml

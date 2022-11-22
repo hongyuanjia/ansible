@@ -1,0 +1,16 @@
+- name: Add OpenSSH to system PATH
+  win_path:
+    elements: 'C:\Program Files\OpenSSH'
+
+- name: Add OpenSSH to user PATH
+  win_path:
+    elements: 'C:\Program Files\OpenSSH'
+    scope: user
+
+- name: Set essential enviroment variables
+  ansible.windows.win_environment:
+    level: user
+    variables:
+      HOME: $Env:USERPROFIEE
+      EDITOR: nvim
+      GIT_EDITOR: nvim

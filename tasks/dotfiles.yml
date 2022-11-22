@@ -1,10 +1,13 @@
 - name: Check if chezmoi has already been installed
+  when: ansible_facts['os_family'] != "Windows"
   stat:
     path: "{{ lookup('env', 'HOME') }}/.local/bin/chezmoi"
   register: chezmoi_stats
 
 - name: Install chezmoi
-  when: chezmoi_stats.stat.exists == False
+  when:
+    - ansible_facts['os_family'] != "Windows"
+    - chezmoi_stats.stat.exists == False
   block:
     - name: Download chezmoi
       shell: 'sh -c "$(curl -fsLS get.chezmoi.io)" -- -b {{ lookup("env", "HOME") }}/.local/bin'
@@ -14,6 +17,11 @@
         name: ["age"]
 
 - name: Apply dot files
+  when: ansible_facts['os_family'] != "Windows"
   shell: "chezmoi init --apply --force git@github.com:hongyuanjia/dotfiles.git"
   environment:
     PATH: "{{ lookup('env', 'HOME') }}/.local/bin:{{ lookup('env', 'PATH') }}"
+
+- name: Apply dot files for Windows
+  when: ansible_facts['os_family'] == "Windows"
+  win_shell: "chezmoi init --apply --force https://github.com/hongyuanjia/dotfiles.git"
