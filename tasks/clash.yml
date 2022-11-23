@@ -1,0 +1,29 @@
+- name: Check if Clash is installed
+  stat:
+    path: "{{ lookup('env', 'HOME') }}/.local/bin/clash"
+  register: clash
+
+- name: Install Clash
+  when: clash.stat.exists == false
+  block:
+    - name: Get the latest release of Clash
+      uri:
+        url: https://api.github.com/repos/Fndroid/clash_for_windows_pkg/releases/latest
+        return_content: true
+      register: clash_latest
+
+    - name: Install Clash
+      unarchive:
+        src: 'https://github.com/Fndroid/clash_for_windows_pkg/releases/download/{{clash_latest.json.tag_name}}/Clash.for.Windows-{{clash_latest.json.tag_name}}-x64-linux.tar.gz'
+        remote_src: yes
+        dest: "{{ lookup('env', 'HOME') }}/.local/bin"
+
+    - name: Rename Clash
+      copy:
+        src: "{{ lookup('env', 'HOME') }}/.local/bin/Clash\ for\ Windows-{{clash_latest.json.tag_name}}-x64-linux"
+        dest: "{{ lookup('env', 'HOME') }}/.local/bin/clash"
+
+    - name: Clean up
+      file:
+        path: "{{ lookup('env', 'HOME') }}/.local/bin/Clash\ for\ Windows-{{clash_latest.json.tag_name}}-x64-linux"
+        state: absent
