@@ -19,6 +19,22 @@
         dest: "{{ dest_key }}.pub"
         mode: 0644
 
+    - name: Change ansible repo remote to SSH
+      block:
+        - name: Test if it is using https
+          shell: git remote -v | grep "origin.*https" &> /dev/null
+          failed_when: false
+          register: http_remote
+
+        - name: Change to SSH remote
+          when: http_remote.rc == 0
+          block:
+            - name: Remove HTTPS remote
+              shell: git remote remove origin
+
+            - name: Add SSH remote
+              shell: "git remote add git@github.com:hongyuanjia/ansible.git"
+
 - name: Install SSH on Windows
   when: ansible_facts['os_family'] == "Windows"
   block:
