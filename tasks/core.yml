@@ -6,7 +6,7 @@
 - name: Install system packages required for buiding neovim
   become: true
   apt:
-    name: ["lua5.1", "unzip", "libtool", "libtool-bin", "gettext", "clang"]
+    name: ["lua5.1", "unzip", "libtool", "libtool-bin", "gettext", "clang", "autoconf", "automake", "doxygen"]
 
 - name: Install other system packages
   become: true
