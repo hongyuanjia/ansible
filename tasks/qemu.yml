@@ -1,0 +1,22 @@
+# ref: https://christitus.com/vm-setup-in-linux/
+- name: Install system packages for qemu/kvm
+  become: true
+  apt:
+    name: ["qemu-kvm", "qemu-utils", "libvirt-deamon-system", "libvirt-clients", "virt-manager", "ovmf"]
+
+- name: Check if the default network is started
+  become: true
+  shell: virsh net-list -all | grep default &> /dev/null
+  failed_when: false
+  register: network_started
+
+- name: Start default network for networking
+  become: true
+  when: network_started.rc != 0
+  shell: virsh net-start default && sudo virsh net-autostart default
+
+- name: Add user to the required groups
+  user:
+    name: "{{ lookup('env', 'USER') }}"
+    groups: libvirt,libvirt-qemu,kvm,input,disk
+    append: true

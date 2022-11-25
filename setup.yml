@@ -21,6 +21,7 @@
     - include_tasks: tasks/nerd-fonts.yml
     - include_tasks: tasks/tools.yml
     - include_tasks: tasks/fingerprint.yml
+    - include_tasks: tasks/qemu.yml
 
 - hosts: win10
   vars:
