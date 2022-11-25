@@ -2,7 +2,7 @@
 - name: Install system packages for qemu/kvm
   become: true
   apt:
-    name: ["qemu-kvm", "qemu-utils", "libvirt-deamon-system", "libvirt-clients", "virt-manager", "ovmf"]
+    name: ["qemu-kvm", "qemu-utils", "libvirt-daemon-system", "libvirt-clients", "virt-manager", "ovmf"]
 
 - name: Check if the default network is started
   become: true
