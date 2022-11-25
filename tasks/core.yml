@@ -3,6 +3,11 @@
   apt:
     name: ["build-essential", "cmake", "pkg-config"]
 
+- name: Install OpenSSH Server
+  become: true
+  apt:
+    name: openssh-server
+
 - name: Install system packages required for buiding neovim
   become: true
   apt:
