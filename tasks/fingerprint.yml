@@ -1,0 +1,18 @@
+- name: Check if there is a fingerprint reader
+  shell: lsusb | grep "Fingerprint Reader" &> /dev/null
+  failed_when: false
+  register: has_fg
+
+# ref: https://rcarrillo.dev/enable-fingerprint-scanner-on-pop-os-21-10/
+- name: Enable fingerprint authorization
+  when: has_fg.rc == 0
+  block:
+    - name: Install system packages for finger print authorization
+      become: true
+      apt:
+        name: ["fprintd", "libpam-fprintd"]
+
+    # next step: fprintd-enroll && sudo pam-auth-update
+    - name: Enable fingerprint using PAM
+      become: true
+      command: pam-auth-update --enable fprintd
