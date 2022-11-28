@@ -20,21 +20,37 @@
         mode: 0644
 
     - name: Change ansible repo remote to SSH
-      when: false
       block:
-        - name: Test if it is using https
-          shell: git remote -v | grep "origin.*https" &> /dev/null
+        - name: Get current remotes
           failed_when: false
+          shell: git remote -v
+          args:
+            chdir: "{{ playbook_dir }}"
+          register: remotes
+
+        - debug:
+            var: remotes
+
+        - name: Test if it is using https
+          failed_when: false
+          shell: 'cat {{ remotes.stdout }} | grep "origin.*https" &> /dev/null'
+          args:
+            chdir: "{{ playbook_dir }}"
           register: http_remote
 
         - name: Change to SSH remote
-          when: http_remote.rc == 0
+          when: remotes.stdout == "" or http_remote.rc == 0
           block:
             - name: Remove HTTPS remote
+              when: http_remote.rc == 0
               shell: git remote remove origin
+              args:
+                chdir: "{{ playbook_dir }}"
 
             - name: Add SSH remote
-              shell: "git remote add git@github.com:hongyuanjia/ansible.git"
+              shell: "git remote add origin git@github.com:hongyuanjia/ansible.git"
+              args:
+                chdir: "{{ playbook_dir }}"
 
 - name: Install SSH on Windows
   when: ansible_facts['os_family'] == "Windows"
