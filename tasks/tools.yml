@@ -14,3 +14,6 @@
 
 - name: Install LazyGit
   include_tasks: ./tasks/tools/lazygit.yml
+
+- name: Install wslu
+  include_tasks: ./tasks/tools/wslu.yml

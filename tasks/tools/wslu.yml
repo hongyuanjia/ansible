@@ -1,0 +1,19 @@
+- name: Install wslu in WSL
+  when: in_wsl.rc == 0
+  block:
+  - name: Check if wslu is installed
+    shell: "command -v wslview >/dev/null 2>&1"
+    register: wslu_exists
+    failed_when: no
+
+  - name: Add wslu PPA
+    when: wslu_exists != 0
+    become: true
+    apt_repository:
+      repo: ppa:wslutilities/wslu
+
+  - name: Install wslu
+    when: wslu_exists != 0
+    become: true
+    apt:
+      name: ["ubuntu-wsl", "wslu"]
