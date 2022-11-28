@@ -66,11 +66,6 @@
         - name: Install bspm
           shell: Rscript -e 'install.packages("bspm")'
 
-        - name: Check if running in WSL
-          command: 'grep -qEi "(Microsoft|WSL)" /proc/version'
-          failed_when: no
-          register: in_wsl
-
         - name: Enable bspm
           when: in_wsl.rc != 0
           lineinfile:

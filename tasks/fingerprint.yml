@@ -5,7 +5,7 @@
 
 # ref: https://rcarrillo.dev/enable-fingerprint-scanner-on-pop-os-21-10/
 - name: Enable fingerprint authorization
-  when: has_fg.rc == 0
+  when: in_wsl.rc != 0 and has_fg.rc == 0
   block:
     - name: Install system packages for finger print authorization
       become: true

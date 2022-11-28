@@ -12,6 +12,6 @@
         dest: /tmp/rustup-init
         mode: '0755'
         force: yes
-    
+
     - name: Install Rustup
       command: /tmp/rustup-init -y

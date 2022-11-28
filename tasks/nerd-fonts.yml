@@ -9,7 +9,7 @@
   failed_when: no
 
 - name: Install JetBrainsMono nerd fonts
-  when: jbnf_exists.rc != 0
+  when: in_wsl.rc != 0 and jbnf_exists.rc != 0
   block:
     - name: Get the latest release of nerd fonts
       uri:

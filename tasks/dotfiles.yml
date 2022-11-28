@@ -5,18 +5,18 @@
     stat:
       path: "{{ lookup('env', 'HOME') }}/.local/bin/chezmoi"
     register: chezmoi_stats
-  
+
   - name: Install chezmoi
     when: chezmoi_stats.stat.exists == False
     block:
       - name: Download chezmoi
         shell: 'sh -c "$(curl -fsLS get.chezmoi.io)" -- -b {{ lookup("env", "HOME") }}/.local/bin'
-  
+
   - name: Check if age has already been installed
     stat:
       path: "{{ lookup('env', 'HOME') }}/.local/bin/age"
     register: age_stats
-  
+
   - name: Install age
     when: age_stats.stat.exists == False
     block:

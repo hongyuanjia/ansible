@@ -20,6 +20,7 @@
         mode: 0644
 
     - name: Change ansible repo remote to SSH
+      when: false
       block:
         - name: Test if it is using https
           shell: git remote -v | grep "origin.*https" &> /dev/null

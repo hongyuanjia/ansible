@@ -9,6 +9,10 @@
         force_apt_get: true
         update_cache: true
         state: present
+    - name: Check if running in WSL
+      shell: grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null
+      failed_when: false
+      register: in_wsl
   tasks:
     - include_tasks: tasks/clash.yml
     - include_tasks: tasks/ssh.yml

@@ -4,7 +4,7 @@
   register: clash
 
 - name: Install Clash
-  when: clash.stat.exists == false
+  when: clash.stat.exists == false and in_wsl.rc != 0
   block:
     - name: Get the latest release of Clash
       uri:
