@@ -1,20 +1,43 @@
-- name: Check if chezmoi has already been installed
+- name: Install chezmoi and age
   when: ansible_facts['os_family'] != "Windows"
-  stat:
-    path: "{{ lookup('env', 'HOME') }}/.local/bin/chezmoi"
-  register: chezmoi_stats
-
-- name: Install chezmoi
-  when:
-    - ansible_facts['os_family'] != "Windows"
-    - chezmoi_stats.stat.exists == False
   block:
-    - name: Download chezmoi
-      shell: 'sh -c "$(curl -fsLS get.chezmoi.io)" -- -b {{ lookup("env", "HOME") }}/.local/bin'
-    - name: Install age
-      become: true
-      apt:
-        name: ["age"]
+  - name: Check if chezmoi has already been installed
+    stat:
+      path: "{{ lookup('env', 'HOME') }}/.local/bin/chezmoi"
+    register: chezmoi_stats
+  
+  - name: Install chezmoi
+    when: chezmoi_stats.stat.exists == False
+    block:
+      - name: Download chezmoi
+        shell: 'sh -c "$(curl -fsLS get.chezmoi.io)" -- -b {{ lookup("env", "HOME") }}/.local/bin'
+  
+  - name: Check if age has already been installed
+    stat:
+      path: "{{ lookup('env', 'HOME') }}/.local/bin/age"
+    register: age_stats
+  
+  - name: Install age
+    when: age_stats.stat.exists == False
+    block:
+      - when: ansible_facts['distribution_version'] is version('22.04', '>=')
+        become: true
+        apt:
+          name: ["age"]
+      - when: ansible_facts['distribution_version'] is version('22.04', '<')
+        block:
+          - unarchive:
+              src: "/tmp/age_latest.tar.gz"
+              dest: "/tmp"
+              remote_src: true
+          - copy:
+              src: "/tmp/age/age"
+              dest: "{{ lookup('env', 'HOME') }}/.local/bin"
+              mode: "preserve"
+          - copy:
+              src: "/tmp/age/age-keygen"
+              dest: "{{ lookup('env', 'HOME') }}/.local/bin"
+              mode: "preserve"
 
 - name: Apply dot files
   when: ansible_facts['os_family'] != "Windows"
