@@ -1,0 +1,22 @@
+- name: Change Debian to SID branch and use the BSFU mirror
+  when: ansible_facts["distribution"] == "Debian"
+  become: true
+  block:
+    - name: Backup original sources.list
+      become: true
+      copy:
+        src: "/etc/apt/sources.list"
+        dest: "/etc/apt/sources.list.bak"
+
+    - name: Set the BSFU Debian mirror
+      copy:
+        content: |
+          deb http://mirrors.bfsu.edu.cn/debian/ sid main contrib non-free non-free-firmware
+          deb-src http://mirrors.bfsu.edu.cn/debian/ sid main contrib non-free non-free-firmware
+        dest: "/etc/apt/sources.list"
+
+    - name: Update package list
+      apt:
+        force_apt_get: true
+        update_cache: true
+        state: present
