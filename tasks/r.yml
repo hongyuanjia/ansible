@@ -1,7 +1,7 @@
 # whether to use r2u
 - name: Whether to use r2u for fast R package install
   set_fact:
-    use_r2u: true
+    use_r2u: false
 
 - name: Check if R is installed
   shell: "command -v R >/dev/null 2>&1"

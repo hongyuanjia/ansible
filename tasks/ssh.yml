@@ -28,9 +28,6 @@
             chdir: "{{ playbook_dir }}"
           register: remotes
 
-        - debug:
-            var: remotes
-
         - name: Test if it is using https
           failed_when: false
           shell: 'cat {{ remotes.stdout }} | grep "origin.*https" &> /dev/null'
