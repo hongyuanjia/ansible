@@ -19,25 +19,26 @@
 
   - name: Install age
     when: age_stats.stat.exists == False
+    become: true
     block:
-      - when: ansible_facts['distribution_version'] is version('22.04', '>=')
-        become: true
-        apt:
-          name: ["age"]
-      - when: ansible_facts['distribution_version'] is version('22.04', '<')
-        block:
-          - unarchive:
-              src: "/tmp/age_latest.tar.gz"
-              dest: "/tmp"
-              remote_src: true
-          - copy:
-              src: "/tmp/age/age"
-              dest: "{{ lookup('env', 'HOME') }}/.local/bin"
-              mode: "preserve"
-          - copy:
-              src: "/tmp/age/age-keygen"
-              dest: "{{ lookup('env', 'HOME') }}/.local/bin"
-              mode: "preserve"
+    - name: Get the latest release of age
+      uri:
+        url: https://api.github.com/repos/FiloSottile/age/releases/latest
+        return_content: true
+      register: age_latest
+    - name: Install age
+      unarchive:
+        src: '{{ gh_proxy }}https://github.com/FiloSottile/age/releases/download/{{age_latest.json.tag_name}}/age-{{age_latest.json.tag_name}}-linux-amd64.tar.gz'
+        remote_src: yes
+        dest: "/tmp"
+    - copy:
+        src: "/tmp/age/age"
+        dest: "{{ lookup('env', 'HOME') }}/.local/bin"
+        mode: "preserve"
+    - copy:
+        src: "/tmp/age/age-keygen"
+        dest: "{{ lookup('env', 'HOME') }}/.local/bin"
+        mode: "preserve"
 
 - name: Apply dot files
   when: ansible_facts['os_family'] != "Windows"
