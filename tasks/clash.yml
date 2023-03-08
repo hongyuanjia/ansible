@@ -1,6 +1,6 @@
 - name: Check if Clash is installed
   stat:
-    path: "{{ lookup('env', 'HOME') }}/.local/bin/clash"
+    path: "{{ lookup('env', 'HOME') }}/.local/bin/clash/cfw"
   register: clash
 
 - name: Install Clash
@@ -12,6 +12,11 @@
         return_content: true
       register: clash_latest
 
+    - name: Make sure directory "~/.local/bin" exists
+      file:
+        path: "{{ lookup('env', 'HOME') }}/.local/bin"
+        state: directory
+
     - name: Install Clash
       unarchive:
         src: '{{ gh_proxy }}https://github.com/Fndroid/clash_for_windows_pkg/releases/download/{{clash_latest.json.tag_name}}/Clash.for.Windows-{{clash_latest.json.tag_name}}-x64-linux.tar.gz'
@@ -20,10 +25,14 @@
 
     - name: Rename Clash
       copy:
-        src: "{{ lookup('env', 'HOME') }}/.local/bin/Clash\ for\ Windows-{{clash_latest.json.tag_name}}-x64-linux"
+        src: "{{ lookup('env', 'HOME') }}/.local/bin/Clash\ for\ Windows-{{clash_latest.json.tag_name}}-x64-linux/"
         dest: "{{ lookup('env', 'HOME') }}/.local/bin/clash"
 
-    - name: Clean up
+    - name: Make executable of clash
       file:
-        path: "{{ lookup('env', 'HOME') }}/.local/bin/Clash\ for\ Windows-{{clash_latest.json.tag_name}}-x64-linux"
-        state: absent
+        path: "{{ item }}"
+        mode: "a+x"
+      loop:
+        - "{{ lookup('env', 'HOME') }}/.local/bin/clash/cfw"
+        - "{{ lookup('env', 'HOME') }}/.local/bin/clash/resources/static/files/linux/x64/clash-linux"
+        - "{{ lookup('env', 'HOME') }}/.local/bin/clash/resources/static/files/linux/x64/service/clash-core-service"
