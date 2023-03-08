@@ -18,7 +18,7 @@
         dest: "/tmp/neovim"
 
     - name: Build Neovim
-      shell: "cd /tmp/neovim && make distclean && make CMAKE_BUILD_TYPE=RelWithDebInfo -j 20"
+      shell: "cd /tmp/neovim && make distclean && make CMAKE_BUILD_TYPE=Release -j 20"
 
     - name: Install Neovim
       shell: "cd /tmp/neovim && make install"
