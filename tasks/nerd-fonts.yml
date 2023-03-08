@@ -19,7 +19,7 @@
 
     - name: Download JetBrainsMono nerd fonts
       unarchive:
-        src: "https://github.com/ryanoasis/nerd-fonts/releases/download/{{nf_latest.json.tag_name}}/JetBrainsMono.zip"
+        src: "{{ gh_proxy }}https://github.com/ryanoasis/nerd-fonts/releases/download/{{nf_latest.json.tag_name}}/JetBrainsMono.zip"
         dest: "{{ lookup('env', 'HOME') }}/.local/share/fonts"
         remote_src: yes
 

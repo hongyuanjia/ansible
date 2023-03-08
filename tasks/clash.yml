@@ -14,7 +14,7 @@
 
     - name: Install Clash
       unarchive:
-        src: 'https://github.com/Fndroid/clash_for_windows_pkg/releases/download/{{clash_latest.json.tag_name}}/Clash.for.Windows-{{clash_latest.json.tag_name}}-x64-linux.tar.gz'
+        src: '{{ gh_proxy }}https://github.com/Fndroid/clash_for_windows_pkg/releases/download/{{clash_latest.json.tag_name}}/Clash.for.Windows-{{clash_latest.json.tag_name}}-x64-linux.tar.gz'
         remote_src: yes
         dest: "{{ lookup('env', 'HOME') }}/.local/bin"
 

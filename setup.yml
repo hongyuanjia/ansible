@@ -13,6 +13,9 @@
       shell: grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null
       failed_when: false
       register: in_wsl
+    - name: Whether use GitHub proxy
+      set_fact:
+        gh_proxy: ""
   tasks:
     - include_tasks: tasks/apt.yml
     - include_tasks: tasks/clash.yml

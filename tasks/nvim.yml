@@ -13,7 +13,7 @@
 
     - name: Clone Neovim
       git:
-        repo: "https://github.com/neovim/neovim.git"
+        repo: "{{ gh_proxy }}https://github.com/neovim/neovim.git"
         dest: "/tmp/neovim"
 
     - name: Build Neovim
