@@ -1,10 +1,16 @@
-- name: Check if Neovim is installed
-  shell: "command -v nvim >/dev/null 2>&1"
-  register: nvim_exists
-  failed_when: no
+- name: Check if neovim is installed
+  block:
+    - name: Check if neovim exists
+      shell: "command -v nvim"
+      register: nvim_exists
+      failed_when: no
+    - name: Check neovim version
+      when: nvim_exists.rc == 0
+      shell: "nvim -v | head -1 | cut -d 'v' -f2 | cut -d '-' -f1"
+      register: nvim_ver
 
 - name: Install Neovim
-  when: nvim_exists.rc != 0
+  when: nvim_exists.rc != 0 or nvim_ver.stdout is version("0.8.3", "<", strict=True)
   block:
     - name: Get packer.nvim
       git:
