@@ -3,6 +3,12 @@
   apt:
     name: ["build-essential", "cmake", "pkg-config"]
 
+- name: Install essential utility packages
+  become: true
+  when: in_wsl.rc != 0
+  apt:
+    name: ["sddm", "feh", "rofi", "nitrogen", "lxpolkit", "unzip", "pulseaudio", "pavucontrol"]
+
 - name: Install OpenSSH Server
   become: true
   apt:

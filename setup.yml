@@ -10,7 +10,7 @@
         update_cache: true
         state: present
     - name: Check if running in WSL
-      shell: grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null
+      shell: grep -qEi "(Microsoft|WSL)" /proc/version
       failed_when: false
       register: in_wsl
     - name: Whether use GitHub proxy
