@@ -12,12 +12,14 @@
   when: r_exists.rc != 0
   block:
     - name: Add R project's GPG key
+      when: ansible_facts["distribution"] == "Ubuntu"
       get_url:
         url: "https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc"
         dest: "/etc/apt/trusted.gpg.d/cran_ubuntu_key.asc"
       become: true
 
     - name: Add R apt repository
+      when: ansible_facts["distribution"] == "Ubuntu"
       apt_repository:
         repo: "deb https://cloud.r-project.org/bin/linux/ubuntu {{ ansible_distribution_release  }}-cran40/"
         filename: cran_r
