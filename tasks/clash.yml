@@ -12,6 +12,11 @@
         return_content: true
       register: clash_latest
 
+    - name: Install sysetm requirement for Clash
+      become: true
+      apt:
+        name: "libssn3"
+
     - name: Make sure directory "~/.local/bin" exists
       file:
         path: "{{ lookup('env', 'HOME') }}/.local/bin"
