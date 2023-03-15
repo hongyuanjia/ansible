@@ -19,6 +19,7 @@
     shell: virsh net-start default && sudo virsh net-autostart default
 
   - name: Add user to the required groups
+    become: true
     user:
       name: "{{ lookup('env', 'USER') }}"
       groups: libvirt,libvirt-qemu,kvm,input,disk
