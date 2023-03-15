@@ -7,7 +7,7 @@
   become: true
   when: in_wsl.rc != 0
   apt:
-    name: ["sddm", "feh", "rofi", "nitrogen", "lxpolkit", "unzip", "pulseaudio", "pavucontrol"]
+    name: ["feh", "rofi", "nitrogen", "lxpolkit", "unzip", "pulseaudio", "pavucontrol", "alacritty"]
 
 - name: Install OpenSSH Server
   become: true
