@@ -83,3 +83,8 @@
               suppressMessages(bspm::enable())
               options(bspm.sudo=TRUE)
             create: true
+
+- name: Install system dependencies for common R packages
+  become: true
+  apt:
+    name: ["libcurl4-openssl-dev", "libfontconfig1-dev", "libssl-dev", "libharfbuzz-dev", "libfribidi-dev", "libfreetype6-dev", "libpng-dev", "libtiff5-dev", "libjpeg-dev", "libudunits2-dev"]
