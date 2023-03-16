@@ -3,6 +3,12 @@
   apt:
     name: ["build-essential", "cmake", "pkg-config"]
 
+- name: Install missing firmware
+  become: true
+  when: in_wsl.rc != 0 and ansible_facts["distribution"] == "Debian"
+  apt:
+    name: ["firmware-misc-nonfree"]
+
 - name: Install essential utility packages
   become: true
   when: in_wsl.rc != 0
