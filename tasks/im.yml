@@ -1,0 +1,4 @@
+- name: Install Chinese input method
+  become: true
+  apt:
+    name: "ibus-table-wubi"
