@@ -41,3 +41,8 @@
         - "{{ lookup('env', 'HOME') }}/.local/bin/clash/cfw"
         - "{{ lookup('env', 'HOME') }}/.local/bin/clash/resources/static/files/linux/x64/clash-linux"
         - "{{ lookup('env', 'HOME') }}/.local/bin/clash/resources/static/files/linux/x64/service/clash-core-service"
+
+    - name: Clean up
+      file:
+        path: "{{ lookup('env', 'HOME') }}/.local/bin/Clash\ for\ Windows-{{clash_latest.json.tag_name}}-x64-linux/"
+        state: absent
