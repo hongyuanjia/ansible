@@ -20,6 +20,13 @@
   apt:
     name: openssh-server
 
+# for `Xephyr :5 & sleep 1 ; DISPLAY=:5 awesome`
+- name: Install awesomewm
+  become: true
+  when: in_wsl.rc != 0
+  apt:
+    name: ["awesome", "xserver-xephyr"]
+
 - name: Install system packages required for buiding neovim
   become: true
   apt:
