@@ -6,13 +6,17 @@
 # ref: https://rcarrillo.dev/enable-fingerprint-scanner-on-pop-os-21-10/
 - name: Enable fingerprint authorization
   when: in_wsl.rc != 0 and has_fg.rc == 0
+  become: true
   block:
     - name: Install system packages for finger print authorization
-      become: true
-      apt:
-        name: ["fprintd", "libpam-fprintd"]
+      block:
+        - when: ansible_facts["distribution"] != "Fedora"
+          apt:
+            name: ["fprintd", "libpam-fprintd"]
+        - when: ansible_facts["distribution"] == "Fedora"
+          dnf:
+            name: ["fprintd-pam"]
 
     # next step: fprintd-enroll && sudo pam-auth-update
     - name: Enable fingerprint using PAM
-      become: true
       command: pam-auth-update --enable fprintd

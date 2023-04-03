@@ -1,11 +1,11 @@
 - name: Install productivity packages
   become: true
-  apt:
+  package:
     name: ["bat", "tmux", "fzf", "ripgrep", "rofi", "unzip"]
 
 - name: Install utility packages
   become: true
-  apt:
+  package:
     name: ["neofetch", "flameshot", "lxappearance", "gimp", "firefox"]
 
 - name: Install Delta

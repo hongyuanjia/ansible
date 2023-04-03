@@ -1,4 +1,9 @@
 - name: Install Chinese input method
   become: true
-  apt:
-    name: "ibus-table-wubi"
+  block:
+    - when: ansible_facts["distribution"] != "Fedora"
+      apt:
+        name: ["ibus-table-wubi"]
+    - when: ansible_facts["distribution"] == "Fedora"
+      dnf:
+        name: ["ibus-table-chinese-wubi-jidian"]

@@ -13,15 +13,29 @@
       register: delta_latest
 
     - name: Download the latest release of delta
-      get_url:
-        url: "https://github.com/dandavison/delta/releases/download/{{delta_latest.json.tag_name}}/git-delta_{{delta_latest.json.tag_name}}_amd64.deb"
-        dest: /tmp/delta_latest.deb
-        tmp_dest: /tmp/
-        force: yes
+      block:
+      - when: ansible_facts["distribution"] != "Fedora"
+        get_url:
+          url: "https://github.com/dandavison/delta/releases/download/{{delta_latest.json.tag_name}}/git-delta_{{delta_latest.json.tag_name}}_amd64.deb"
+          dest: /tmp/delta_latest.deb
+          tmp_dest: /tmp/
+          force: yes
+      - when: ansible_facts["distribution"] == "Fedora"
+        unarchive:
+          src: "https://github.com/dandavison/delta/releases/download/{{delta_latest.json.tag_name}}/delta-{{delta_latest.json.tag_name}}-x86_64-unknown-linux-gnu.tar.gz"
+          remote_src: yes
+          dest: "/tmp"
 
     - name: Install delta
-      command: dpkg -i /tmp/delta_latest.deb
-      become: true
+      block:
+      - when: ansible_facts["distribution"] != "Fedora"
+        command: dpkg -i /tmp/delta_latest.deb
+        become: true
+      - when: ansible_facts["distribution"] == "Fedora"
+        copy:
+          src: "/tmp/delta-{{delta_latest.json.tag_name}}-x86_64-unknown-linux-gnu/delta"
+          dest: "{{ lookup('env', 'HOME') }}/.local/bin"
+          mode: "preserve"
 
     - name: Re-init chezmoi to regerate dotfiles
       include_tasks: ./tasks/dotfiles.yml

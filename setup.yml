@@ -3,7 +3,14 @@
     source_key: "./.ssh/id_rsa"
     dest_key: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa"
   pre_tasks:
+    - name: Update Dnf
+      when: ansible_facts["distribution"] == "Fedora"
+      become: true
+      dnf:
+        name: "*"
+        state: latest
     - name: Update Apt
+      when: ansible_facts["distribution"] != "Fedora"
       become: true
       apt:
         force_apt_get: true

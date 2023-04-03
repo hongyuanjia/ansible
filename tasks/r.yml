@@ -9,6 +9,7 @@
   failed_when: no
 
 - name: Install R
+  become: true
   when: r_exists.rc != 0
   block:
     - name: Add R project's GPG key
@@ -16,26 +17,28 @@
       get_url:
         url: "https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc"
         dest: "/etc/apt/trusted.gpg.d/cran_ubuntu_key.asc"
-      become: true
 
     - name: Add R apt repository
       when: ansible_facts["distribution"] == "Ubuntu"
       apt_repository:
         repo: "deb https://cloud.r-project.org/bin/linux/ubuntu {{ ansible_distribution_release  }}-cran40/"
         filename: cran_r
-      become: true
 
     - name: Install R
+      when: ansible_facts["distribution"] != "Fedora"
       apt:
         name: ["r-base", "r-base-dev"]
         install_recommends: false
         state: present
-      become: true
+
+    - name: Install R
+      when: ansible_facts["distribution"] != "Fedora"
+      dnf:
+        name: ["R"]
 
       # Ref: https://github.com/eddelbuettel/r2u/blob/master/inst/scripts/add_cranapt_jammy.sh
     - name: Add r2u for fast R package install
-      become: true
-      when: use_r2u
+      when: use_r2u and ansible_facts["distribution"] != "Fedora"
       block:
         - name: Add CRAN apt key
           get_url:
@@ -86,5 +89,10 @@
 
 - name: Install system dependencies for common R packages
   become: true
-  apt:
-    name: ["libcurl4-openssl-dev", "libfontconfig1-dev", "libssl-dev", "libharfbuzz-dev", "libfribidi-dev", "libfreetype6-dev", "libpng-dev", "libtiff5-dev", "libjpeg-dev", "libudunits2-dev"]
+  block:
+  - when: ansible_facts["distribution"] != "Fedora"
+    apt:
+      name: ["libcurl4-openssl-dev", "libfontconfig1-dev", "libssl-dev", "libharfbuzz-dev", "libfribidi-dev", "libfreetype6-dev", "libpng-dev", "libtiff5-dev", "libjpeg-dev", "libudunits2-dev", "libzstd-dev", "libnetcdf-dev"]
+  - when: ansible_facts["distribution"] == "Fedora"
+    dnf:
+      name: ["libcurl-devel", "fontconfig-devel", "libgit2-devel", "openssl-devel", "harfbuzz-devel", "fribidi-devel", "freetype-devel", "libpng-devel", "libtiff-devel", "libjpeg-turbo-devel", "udunits2-devel", "libzstd-devel", "netcdf-devel"]

@@ -1,5 +1,6 @@
 - name: Install basic system packages
   become: true
+  when: ansible_facts["distribution"] != "Fedora"
   apt:
     name: ["build-essential", "cmake", "pkg-config"]
 
@@ -9,30 +10,35 @@
   apt:
     name: ["firmware-misc-nonfree"]
 
-- name: Install essential utility packages
-  become: true
-  when: in_wsl.rc != 0
-  apt:
-    name: ["feh", "rofi", "nitrogen", "lxpolkit", "unzip", "pulseaudio", "pavucontrol", "alacritty"]
-
 - name: Install OpenSSH Server
   become: true
-  apt:
+  package:
     name: openssh-server
 
 # for `Xephyr :5 & sleep 1 ; DISPLAY=:5 awesome`
 - name: Install awesomewm
   become: true
   when: in_wsl.rc != 0
-  apt:
-    name: ["awesome", "xserver-xephyr"]
+  block:
+    - when: ansible_facts["distribution"] != "Fedora"
+      apt:
+        name: ["awesome", "xserver-xephyr"]
+    - when: ansible_facts["distribution"] == "Fedora"
+      dnf:
+        name: ["awesome", "xorg-x11-server-Xephyr"]
 
 - name: Install system packages required for buiding neovim
   become: true
-  apt:
-    name: ["lua5.1", "unzip", "libtool", "libtool-bin", "gettext", "clang", "autoconf", "automake", "doxygen"]
+  block:
+    - when: ansible_facts["distribution"] != "Fedora"
+      apt:
+        name: ["lua5.1", "unzip", "libtool", "libtool-bin", "gettext", "clang", "autoconf", "automake", "doxygen"]
+    - when: ansible_facts["distribution"] == "Fedora"
+      dnf:
+        name: ["lua", "ninja-build", "libtool", "cmake", "gcc", "gcc-c++", "make", "pkgconfig", "unzip", "gettext", "curl"]
 
-- name: Install other system packages
+- name: Install essential utility packages
   become: true
-  apt:
-    name: ["curl", "wget", "htop", "python3-pip"]
+  package:
+    name: ["curl", "wget", "htop", "python3-pip", "rofi", "nitrogen", "lxpolkit", "unzip", "pipewire-pulseaudio", "pavucontrol", "alacritty"]
+
