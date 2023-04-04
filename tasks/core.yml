@@ -6,6 +6,16 @@
 
 - name: Install missing firmware
   become: true
+  when: in_wsl.rc != 0
+  block:
+    - name: Install missing fireware for Debian
+      when: ansible_facts["distribution"] == "Debian"
+      apt:
+        name: ["firmware-misc-nonfree"]
+    - name: Install missing fireware for Fedora
+      when: ansible_facts["distribution"] == "Fedora"
+      dnf:
+        name: ["iwlax2xx-firmware"]
 
 - name: Install OpenSSH Server
   become: true
