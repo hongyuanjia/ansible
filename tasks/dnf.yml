@@ -1,0 +1,47 @@
+- name: Change Fedora to use the BFSU mirror
+  when: ansible_facts["distribution"] == "Fedora"
+  become: true
+  block:
+    - name: Backup original yum repos
+      become: true
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+      loop:
+      - src: "/etc/yum.repos.d/fedora.repo"
+        dest: "/etc/yum.repos.d/fedora.repo.bak"
+      - src: "/etc/yum.repos.d/fedora-modular.repo"
+        dest: "/etc/yum.repos.d/fedora-modular.repo.bak"
+      - src: "/etc/yum.repos.d/fedora-updates.repo"
+        dest: "/etc/yum.repos.d/fedora-updates.repo.bak"
+      - src: "/etc/yum.repos.d/fedora-updates-modular.repo"
+        dest: "/etc/yum.repos.d/fedora-updates-modular.repo.bak"
+
+    - name: Set the BFSU Fedora mirror
+      block:
+      - name: Comment out metalink
+        replace:
+          path: "{{ item.path }}"
+          regexp: "^metalink="
+          replace: "#metalink="
+        loop:
+        - path: "/etc/yum.repos.d/fedora.repo"
+        - path: "/etc/yum.repos.d/fedora-modular.repo"
+        - path: "/etc/yum.repos.d/fedora-updates.repo"
+        - path: "/etc/yum.repos.d/fedora-updates-modular.repo"
+      - name: Add BFSU mirror base URL
+        replace:
+          path: "{{ item.path }}"
+          regexp: "^#baseurl=http://download.example/pub/fedora/linux"
+          replace: "baseurl=https://mirrors.bfsu.edu.cn/fedora"
+        loop:
+        - path: "/etc/yum.repos.d/fedora.repo"
+        - path: "/etc/yum.repos.d/fedora-modular.repo"
+        - path: "/etc/yum.repos.d/fedora-updates.repo"
+        - path: "/etc/yum.repos.d/fedora-updates-modular.repo"
+
+    - name: Regerate dnf cache
+      become: true
+      dnf:
+        state: "latest"
+        update_cache: true

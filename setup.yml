@@ -25,6 +25,7 @@
         gh_proxy: ""
   tasks:
     - include_tasks: tasks/apt.yml
+    - include_tasks: tasks/dnf.yml
     - include_tasks: tasks/clash.yml
     - include_tasks: tasks/ssh.yml
     - include_tasks: tasks/core.yml
