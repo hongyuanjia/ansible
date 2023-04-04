@@ -58,7 +58,7 @@
     - name: Create clash service file
       become: true
       copy:
-        dest: "{{ lookup('env', 'HOME') }}/.config/clash/service/clash-core-service"
+        dest: "/usr/lib/systemd/clash-core-service"
         content: |
           [Unit]
           Description=Clash core service created by Clash for Windows
