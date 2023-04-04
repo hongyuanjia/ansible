@@ -41,3 +41,50 @@
       file:
         path: "{{ lookup('env', 'HOME') }}/.local/bin/Clash\ for\ Windows-{{clash_latest.json.tag_name}}-x64-linux/"
         state: absent
+
+- name: Manually install service for Clash for Windows
+  when: in_wsl.rc != 0
+  block:
+    - name: Make sure clash service folder exists in the config folder
+      file:
+        path: "{{ lookup('env', 'HOME') }}/.config/clash/service"
+        state: "directory"
+
+    - name: Copy clash service executable
+      copy:
+        src: "{{ lookup('env', 'HOME') }}/.local/bin/clash/resources/static/files/linux/x64/service/clash-core-service"
+        dest: "{{ lookup('env', 'HOME') }}/.config/clash/service/clash-core-service"
+
+    - name: Create clash service file
+      become: true
+      copy:
+        dest: "{{ lookup('env', 'HOME') }}/.config/clash/service/clash-core-service"
+        content: |
+          [Unit]
+          Description=Clash core service created by Clash for Windows
+          After=network-online.target nftables.service iptabels.service
+
+          [Service]
+          Type=simple
+          ExecStart={{ lookup('env', 'HOME') }}/.config/clash/service/clash-core-service
+          Restart=always
+          RestartSec=5
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Fix SELinux permissions on Fedora
+      when: ansible_facts["distribution"] == "Fedora"
+      become: true
+      # ref: https://github.com/Fndroid/clash_for_windows_pkg/issues/3949
+      shell: |
+        chcon -R -t bin_t {{ lookup('env', 'HOME') }}/.config/clash/service/
+        semanage fcontext -a -t bin_t "{{ lookup('env', 'HOME') }}/.config/clash/service(/.*)?"
+        restorecon -r -v {{ lookup('env', 'HOME') }}/.config/clash/service
+
+    - name: Enable clash service
+      become: true
+      systemd:
+        name: clash-core-service
+        state: started
+        enabled: true
