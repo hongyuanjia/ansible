@@ -9,8 +9,20 @@
   - name: Install chezmoi
     when: chezmoi_stats.stat.exists == False
     block:
-      - name: Download chezmoi
-        shell: 'sh -c "$(curl -fsLS get.chezmoi.io)" -- -b {{ lookup("env", "HOME") }}/.local/bin'
+    - name: Get the latest release of chezmoi
+      uri:
+        url: https://api.github.com/repos/twpayne/chezmoi/releases/latest
+        return_content: true
+      register: cm_latest
+    - name: Install chezmoi
+      unarchive:
+        src: '{{ gh_proxy }}https://github.com/twpayne/chezmoi/releases/download/{{cm_latest.json.tag_name}}/chezmoi_{{cm_latest.json.tag_name[1:]}}_linux_amd64.tar.gz'
+        remote_src: yes
+        dest: "/tmp"
+    - copy:
+        src: "/tmp/chezmoi"
+        dest: "{{ lookup('env', 'HOME') }}/.local/bin/"
+        mode: "preserve"
 
   - name: Check if age has already been installed
     stat:
