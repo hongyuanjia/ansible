@@ -41,9 +41,11 @@
 - name: Install Emoji fonts
   become: true
   block:
-    - when: ansible_facts["distribution"] != "Fedora"
+    - name: Install Emoji fonts on Debian-based
+      when: ansible_facts["distribution"] != "Fedora"
       apt:
         name: "fonts-noto-color-emoji"
-    - when: ansible_facts["distribution"] == "Fedora"
+    - name: Install Emoji fonts on Fedora
+      when: ansible_facts["distribution"] == "Fedora"
       dnf:
         name: "google-noto-emoji-color-fonts"

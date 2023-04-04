@@ -5,12 +5,14 @@
   block:
   - name: Install system packages for qemu/kvm
     block:
-    - when: ansible_facts["distribution"] != "Fedora"
+    - name: Install system packages for qemu/kvm on Debian-based
+      when: ansible_facts["distribution"] != "Fedora"
       apt:
         name: ["qemu-kvm", "qemu-utils", "libvirt-daemon-system", "libvirt-clients", "virt-manager", "ovmf"]
     # currently, dnf module does not support passing options
     # see: https://github.com/ansible/ansible/issues/67187
-    - when: ansible_facts["distribution"] == "Fedora"
+    - name: Install system packages for qemu/kvm on Fedora
+      when: ansible_facts["distribution"] == "Fedora"
       dnf:
         name: ["virt-install", "libvirt-daemon-config-network", "libvirt-daemon-kvm", "qemu-kvm", "virt-manager", "virt-viewer", "guestfs-tools", "libguestfs-tools", "python3-libguestfs", "virt-top"]
 
@@ -28,12 +30,14 @@
   - name: Add user to the required groups
     become: true
     block:
-      - when: ansible_facts["distribution"] != "Fedora"
+      - name: Add user to the required groups on Debian-based
+        when: ansible_facts["distribution"] != "Fedora"
         user:
           name: "{{ lookup('env', 'USER') }}"
           groups: libvirt,libvirt-qemu,kvm,input,disk
           append: true
-      - when: ansible_facts["distribution"] == "Fedora"
+      - name: Add user to the required groups on Fedora
+        when: ansible_facts["distribution"] == "Fedora"
         user:
           name: "{{ lookup('env', 'USER') }}"
           groups: libvirt,qemu,kvm,input,disk

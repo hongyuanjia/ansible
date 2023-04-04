@@ -8,6 +8,7 @@
   become: true
   dnf:
     name: "util-linux-user"
+
 - name: Change shell to zsh
   shell: chsh -s $(which zsh)
   become: true

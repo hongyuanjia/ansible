@@ -43,11 +43,13 @@
         src: '{{ gh_proxy }}https://github.com/FiloSottile/age/releases/download/{{age_latest.json.tag_name}}/age-{{age_latest.json.tag_name}}-linux-amd64.tar.gz'
         remote_src: yes
         dest: "/tmp"
-    - copy:
+    - name: Copy age to '~/.local/bin'
+      copy:
         src: "/tmp/age/age"
         dest: "{{ lookup('env', 'HOME') }}/.local/bin"
         mode: "preserve"
-    - copy:
+    - name: Copy age-keygen to '~/.local/bin'
+      copy:
         src: "/tmp/age/age-keygen"
         dest: "{{ lookup('env', 'HOME') }}/.local/bin"
         mode: "preserve"

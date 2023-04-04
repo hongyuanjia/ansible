@@ -6,9 +6,6 @@
 
 - name: Install missing firmware
   become: true
-  when: in_wsl.rc != 0 and ansible_facts["distribution"] == "Debian"
-  apt:
-    name: ["firmware-misc-nonfree"]
 
 - name: Install OpenSSH Server
   become: true
@@ -20,20 +17,24 @@
   become: true
   when: in_wsl.rc != 0
   block:
-    - when: ansible_facts["distribution"] != "Fedora"
+    - name: Install awesomewm on Debian-based
+      when: ansible_facts["distribution"] != "Fedora"
       apt:
         name: ["awesome", "xserver-xephyr"]
-    - when: ansible_facts["distribution"] == "Fedora"
+    - name: Install awesomewm on Fedora
+      when: ansible_facts["distribution"] == "Fedora"
       dnf:
         name: ["awesome", "xorg-x11-server-Xephyr"]
 
 - name: Install system packages required for buiding neovim
   become: true
   block:
-    - when: ansible_facts["distribution"] != "Fedora"
+    - name: Install system packages required for buiding neovim on Debian-based
+      when: ansible_facts["distribution"] != "Fedora"
       apt:
         name: ["lua5.1", "unzip", "libtool", "libtool-bin", "gettext", "clang", "autoconf", "automake", "doxygen"]
-    - when: ansible_facts["distribution"] == "Fedora"
+    - name: Install system packages required for buiding neovim on Fedora
+      when: ansible_facts["distribution"] == "Fedora"
       dnf:
         name: ["lua", "ninja-build", "libtool", "cmake", "gcc", "gcc-c++", "make", "pkgconfig", "unzip", "gettext", "curl"]
 
@@ -41,4 +42,3 @@
   become: true
   package:
     name: ["curl", "wget", "htop", "python3-pip", "rofi", "nitrogen", "lxpolkit", "unzip", "pipewire-pulseaudio", "pavucontrol", "alacritty"]
-
