@@ -51,4 +51,30 @@
 - name: Install essential utility packages
   become: true
   package:
-    name: ["curl", "wget", "htop", "python3-pip", "rofi", "nitrogen", "lxpolkit", "unzip", "pipewire-pulseaudio", "pavucontrol", "alacritty"]
+    name: ["curl", "wget", "htop", "python3-pip", "rofi", "nitrogen", "lxpolkit",
+      "unzip", "pipewire-pulseaudio", "pavucontrol", "network-manager-applet", "blueman"]
+
+- name: Install wezterm terminal emulator
+  when: in_wsl.rc != 0
+  block:
+    - name: Check if wezterm is already installed
+      shell: "command -v wezterm"
+      register: wezterm_exists
+      failed_when: no
+    - name: Install wezterm if not installed
+      become: true
+      when: wezterm_exists.rc != 0
+      block:
+        - name: Install wezterm on Fedora
+          when: ansible_facts["distribution"] == "Fedora"
+          dnf:
+            name: "{{ gh_proxy }}https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly-fedora37.rpm"
+            disable_gpg_check: true
+        - name: Install wezterm on Debian
+          when: ansible_facts["distribution"] == "Debian"
+          apt:
+            deb: "{{ gh_proxy }}https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Debian11.deb"
+        - name: Install wezterm on Ubuntu
+          when: ansible_facts["distribution"] == "Ubuntu"
+          apt:
+            deb: "{{ gh_proxy }}https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu22.04.deb"
