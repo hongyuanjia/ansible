@@ -1,0 +1,26 @@
+- name: Install Nordic theme
+  become: true
+  git:
+    repo: "{{ gh_proxy }}https://github.com/EliverLara/Nordic.git"
+    dest: "/usr/share/themes/Nordic"
+
+- name: Install Nordzy cursor themes
+  become: true
+  block:
+    - name: Clone the Nordzy-cursors repo
+      git:
+        repo: "{{ gh_proxy }}https://github.com/alvatip/Nordzy-cursors.git"
+        dest: "/tmp/Nordzy-cursors"
+    - name: Install Nordzy-cursor theme
+      unarchive:
+        src: "/tmp/Nordzy-cursors/archives/Nordzy-cursors.tar.gz"
+        dest: "/usr/share/icons/"
+    - name: Install Nordzy-cursor white theme
+      unarchive:
+        src: "/tmp/Nordzy-cursors/archives/Nordzy-cursors-white.tar.gz"
+        dest: "/usr/share/icons/"
+
+- name: Install Papirus icon theme
+  become: true
+  package:
+    name: "papirus-icon-theme"
