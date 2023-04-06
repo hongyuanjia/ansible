@@ -1,0 +1,21 @@
+- name: Check if doublecmd is installed
+  shell: "command -v doublecmd >/dev/null 2>&1"
+  register: doublecmd_exists
+  failed_when: no
+
+- name: Install doublecmd
+  when: doublecmd_exists.rc != 0
+  become: true
+  block:
+    - name: Install the latest doublecmd for Fedora
+      when: ansible_facts["distribution"] == "Fedora"
+      dnf:
+        name: "https://download.opensuse.org/repositories/home:/Alexx2000/Fedora_37/x86_64/doublecmd-gtk-1.0.11-1.1.x86_64.rpm"
+    - name: Install doublecmd on Debian
+      when: ansible_facts["distribution"] == "Debian"
+      apt:
+        deb: "{{ gh_proxy }}https://download.opensuse.org/repositories/home:/Alexx2000/Debian_11/amd64/doublecmd-gtk_1.0.11-0+svn272~testing_amd64.deb"
+    - name: Install doublecmd on Debian
+      when: ansible_facts["distribution"] == "Ubuntu"
+      apt:
+        deb: "{{ gh_proxy }}https://download.opensuse.org/repositories/home:/Alexx2000/xUbuntu_22.04/amd64/doublecmd-gtk_1.0.11-0+svn272~testing_amd64.deb"

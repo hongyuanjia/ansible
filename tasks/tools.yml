@@ -21,4 +21,7 @@
   include_tasks: ./tasks/tools/lazygit.yml
 
 - name: Install wslu
+  include_tasks: ./tasks/tools/doublecmd.yml
+
+- name: Install wslu
   include_tasks: ./tasks/tools/wslu.yml
