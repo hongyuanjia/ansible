@@ -6,7 +6,7 @@
 - name: Install utility packages
   become: true
   package:
-    name: ["neofetch", "flameshot", "lxappearance", "gimp", "firefox"]
+    name: ["neofetch", "flameshot", "lxappearance", "gimp", "firefox", "feh", "zathura"]
 
 - name: Install Delta
   include_tasks: ./tasks/tools/delta.yml
