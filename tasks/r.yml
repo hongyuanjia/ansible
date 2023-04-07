@@ -4,7 +4,7 @@
     use_r2u: false
 
 - name: Check if R is installed
-  shell: "command -v R >/dev/null 2>&1"
+  shell: "command -v R"
   register: r_exists
   failed_when: no
 
@@ -32,7 +32,7 @@
         state: present
 
     - name: Install R
-      when: ansible_facts["distribution"] != "Fedora"
+      when: ansible_facts["distribution"] == "Fedora"
       dnf:
         name: ["R"]
 
