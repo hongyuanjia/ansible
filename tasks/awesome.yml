@@ -1,0 +1,54 @@
+# for `Xephyr :5 & sleep 1 ; DISPLAY=:5 awesome`
+- name: Install awesomewm-git
+  become: true
+  when: in_wsl.rc != 0
+  block:
+    - name: Clone awesomewm source
+      git:
+        repo: "{{ gh_proxy }}https://github.com/awesomeWM/awesome.git"
+        dest: "/tmp/awesome"
+    - name: Install system packages required for building awesome
+      block:
+        - name: Install system packages required for building awesome on Debian-based
+          when: ansible_facts["distribution"] != "Fedora"
+          apt:
+            name: ["cmake", "make", "gcc", "lua5.3", "liblua5.3-dev", "lua-busted",
+              "lua-discount", "lua-ldoc", "lua-lgi", "asciidoctor", "debhelper-compat",
+              "imagemagick", "libcairo2-dev", "libdbus-1-dev", "libgdk-pixbuf2.0-dev",
+              "libglib2.0-dev", "libpango1.0-dev", "libstartup-notification0-dev",
+              "libx11-xcb-dev", "libxcb-cursor-dev", "libxcb-icccm4-dev",
+              "libxcb-keysyms1-dev", "libxcb-randr0-dev", "libxcb-shape0-dev",
+              "libxcb-util0-dev", "libxcb-xinerama0-dev", "libxcb-xkb-dev",
+              "libxcb-xrm-dev", "libxcb-xtest0-dev", "libxdg-basedir-dev",
+              "libxkbcommon-dev", "libxkbcommon-x11-dev", "x11proto-core-dev",
+              "libxcb-icccm4-dev", "libxcb-util0-dev", "libxcb1-dev", "libxcb-xfixes0-dev"]
+        - name: Install system packages required for building awesome on Fedora
+          when: ansible_facts["distribution"] == "Fedora"
+          dnf:
+            name: ["cmake", "make", "gcc", "gcc-c++", "lua", "lua-libs",
+              "lua-devel", "lua-ldoc", "lua-lgi", "ImageMagick", "cairo-devel",
+              "dbus-devel", "gdk-pixbuf2-devel", "glib2-devel", "libX11-devel",
+              "libxcb-devel", "libxdg-basedir-devel", "libxkbcommon-devel",
+              "libxkbcommon-x11-devel", "rubygem-asciidoctor",
+              "startup-notification-devel", "xcb-util-cursor-devel",
+              "xcb-util-devel", "xcb-util-keysyms-devel", "xcb-util-wm-devel",
+              "xcb-util-xrm-devel", "xorg-x11-proto-devel", "gdk-pixbuf2",
+              "gdk-pixbuf2-modules", "glib2", "rpm-build"]
+    - name: Make awesomewm
+      shell: cd /tmp/awesome && make
+    - name: Install awesomewm
+      become: true
+      shell: cd /tmp/awesome && make install
+
+- name: Install Xephyr
+  become: true
+  when: in_wsl.rc != 0
+  block:
+    - name: Install awesomewm on Debian-based
+      when: ansible_facts["distribution"] != "Fedora"
+      apt:
+        name: ["xserver-xephyr"]
+    - name: Install awesomewm on Fedora
+      when: ansible_facts["distribution"] == "Fedora"
+      dnf:
+        name: ["xorg-x11-server-Xephyr"]

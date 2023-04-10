@@ -22,20 +22,6 @@
   package:
     name: openssh-server
 
-# for `Xephyr :5 & sleep 1 ; DISPLAY=:5 awesome`
-- name: Install awesomewm
-  become: true
-  when: in_wsl.rc != 0
-  block:
-    - name: Install awesomewm on Debian-based
-      when: ansible_facts["distribution"] != "Fedora"
-      apt:
-        name: ["awesome", "xserver-xephyr"]
-    - name: Install awesomewm on Fedora
-      when: ansible_facts["distribution"] == "Fedora"
-      dnf:
-        name: ["awesome", "xorg-x11-server-Xephyr"]
-
 - name: Install system packages required for buiding neovim
   become: true
   block:
@@ -54,6 +40,7 @@
     name: ["curl", "wget", "htop", "python3-pip", "rofi", "nitrogen", "lxpolkit",
       "unzip", "pipewire-pulseaudio", "pavucontrol", "network-manager-applet", "blueman"]
 
+# lua-devel
 - name: Install wezterm terminal emulator
   when: in_wsl.rc != 0
   block:

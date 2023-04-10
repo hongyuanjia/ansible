@@ -29,6 +29,7 @@
     - include_tasks: tasks/clash.yml
     - include_tasks: tasks/ssh.yml
     - include_tasks: tasks/core.yml
+    - include_tasks: tasks/awesome.yml
     - include_tasks: tasks/sddm.yml
     - include_tasks: tasks/theme.yml
     - include_tasks: tasks/im.yml
