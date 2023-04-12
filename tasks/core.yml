@@ -37,10 +37,8 @@
 - name: Install essential utility packages
   become: true
   package:
-    name: ["curl", "wget", "htop", "python3-pip", "rofi", "nitrogen", "lxpolkit",
-      "unzip", "pipewire-pulseaudio", "pavucontrol", "network-manager-applet", "blueman"]
+    name: ["curl", "wget", "htop", "python3-pip", "lxpolkit", "unzip", "pipewire-pulseaudio", "pavucontrol", "network-manager-applet", "blueman"]
 
-# lua-devel
 - name: Install wezterm terminal emulator
   when: in_wsl.rc != 0
   block:
