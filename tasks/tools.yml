@@ -1,7 +1,7 @@
 - name: Install productivity packages
   become: true
   package:
-    name: ["bat", "tmux", "fzf", "ripgrep", "rofi", "unzip", "rofi"]
+    name: ["bat", "tmux", "fzf", "ripgrep", "rofi", "unzip", "rofi", "gparted"]
 
 - name: Install utility packages
   become: true
