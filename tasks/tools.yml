@@ -1,9 +1,11 @@
 - name: Install productivity packages
   become: true
+  when: in_wsl.rc != 0
   package:
     name: ["bat", "tmux", "fzf", "ripgrep", "rofi", "unzip", "rofi", "gparted"]
 
 - name: Install utility packages
+  when: in_wsl.rc != 0
   become: true
   package:
     name: ["neofetch", "flameshot", "lxappearance", "gimp", "firefox", "feh", "zathura", "nitrogen"]

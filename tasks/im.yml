@@ -1,4 +1,5 @@
 - name: Install Chinese input method
+  when: in_wsl.rc != 0
   become: true
   block:
     - name: Install Chinese input method on Debian-based

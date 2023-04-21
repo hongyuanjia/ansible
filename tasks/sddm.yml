@@ -1,9 +1,11 @@
 - name: Install SDDM
+  when: in_wsl.rc != 0
   become: true
   package:
     name: "sddm"
 
 - name: Enable SDDM
+  when: in_wsl.rc != 0
   become: true
   systemd:
     name: sddm
@@ -11,17 +13,20 @@
 
 # ref: https://stackoverflow.com/questions/64701241/how-do-i-write-ansible-task-for-systemctl-set-default-graphical-target-without
 - name: Get current systemd default
+  when: in_wsl.rc != 0
   become: true
   command: "systemctl get-default"
   changed_when: false
   register: systemdefault
 
 - name: Set default to graphical target
+  when: 
   become: true
   command: "systemctl set-default graphical.target"
-  when: '"graphical" not in systemdefault.stdout'
+  when: in_wsl.rc != 0 and '"graphical" not in systemdefault.stdout'
 
 - name: Enable Xsession file shipped with SDDM
+  when: in_wsl.rc != 0
   become: true
   replace:
     path: "/etc/sddm.conf"

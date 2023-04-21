@@ -4,7 +4,7 @@
   failed_when: no
 
 - name: Install doublecmd
-  when: doublecmd_exists.rc != 0
+  when: in_wsl.rc != 0 and doublecmd_exists.rc != 0
   become: true
   block:
     - name: Install the latest doublecmd for Fedora

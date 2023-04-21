@@ -1,10 +1,12 @@
 - name: Install Nordic theme
+  when: in_wsl.rc != 0
   become: true
   git:
     repo: "{{ gh_proxy }}https://github.com/EliverLara/Nordic.git"
     dest: "/usr/share/themes/Nordic"
 
 - name: Install Nordzy cursor themes
+  when: in_wsl.rc != 0
   become: true
   block:
     - name: Clone the Nordzy-cursors repo
@@ -21,6 +23,7 @@
         dest: "/usr/share/icons/"
 
 - name: Install Papirus icon theme
+  when: in_wsl.rc != 0
   become: true
   package:
     name: "papirus-icon-theme"
