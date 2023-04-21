@@ -34,10 +34,10 @@
       dnf:
         name: ["lua", "ninja-build", "libtool", "cmake", "gcc", "gcc-c++", "make", "pkgconfig", "unzip", "gettext", "curl"]
 
-- name: Install essential utility packages
+- name: Install essential packages
   become: true
   package:
-    name: ["curl", "wget", "htop", "python3-pip", "lxpolkit", "unzip", "pipewire-pulseaudio", "pavucontrol", "network-manager-applet", "blueman"]
+    name: ["curl", "wget", "htop", "python3-pip", "bat", "tmux", "fzf", "ripgrep"]
 
 - name: Install wezterm terminal emulator
   when: in_wsl.rc != 0

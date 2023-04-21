@@ -2,7 +2,7 @@
   become: true
   when: in_wsl.rc != 0
   package:
-    name: ["bat", "tmux", "fzf", "ripgrep", "rofi", "unzip", "rofi", "gparted"]
+    name: ["rofi", "gparted", "lxpolkit", "pipewire-pulseaudio", "pavucontrol", "network-manager-applet", "blueman"]
 
 - name: Install utility packages
   when: in_wsl.rc != 0
